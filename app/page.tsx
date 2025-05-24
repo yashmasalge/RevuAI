@@ -5,6 +5,7 @@ import FeedbackCard from "../components/FeedbackCard";
 import GitHubInput from "../components/GitHubInput";
 import AppHeader from "../components/AppHeader";
 import { useTheme } from "../components/ThemeProvider";
+import Shimmer from "../components/Shimmer";
 
 interface Message {
   id: string;
@@ -52,44 +53,22 @@ export default function HomePage() {
   }, []);
 
   const handleCodeSubmit = async (code: string) => {
-    if (!code.trim() || isLoading) return;
-
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      type: 'user',
-      content: code,
-      timestamp: new Date()
-    };
-
-    setMessages(prev => [...prev, userMessage]);
     setIsLoading(true);
-
     try {
-      // Call backend API for real code review
-      const res = await fetch('/api/analyze', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code })
+      const response = await fetch("/api/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code }),
       });
-      const data = await res.json();
-      const aiResponse = data.response || 'No response from AI.';
+      const data = await response.json();
 
-      const aiMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        type: 'ai',
-        content: aiResponse,
-        timestamp: new Date()
-      };
-
-      setMessages(prev => [...prev, aiMessage]);
+      setMessages((prev) => [
+        ...prev,
+        { id: Date.now().toString(), type: "user", content: code, timestamp: new Date() },
+        { id: (Date.now() + 1).toString(), type: "ai", content: data.response, timestamp: new Date() },
+      ]);
     } catch (error) {
-      const errorMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        type: 'ai',
-        content: "I apologize, but I encountered an error analyzing your code. Please try again.",
-        timestamp: new Date()
-      };
-      setMessages(prev => [...prev, errorMessage]);
+      console.error("Error analyzing code:", error);
     } finally {
       setIsLoading(false);
     }
