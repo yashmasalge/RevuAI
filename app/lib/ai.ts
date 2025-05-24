@@ -1,7 +1,7 @@
 // lib/ai.ts
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const genAI = new GoogleGenerativeAI('AIzaSyBCkQX3QRq5-7TVaLUrqu2iWKocVZVLVJc');
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
 export async function reviewCode(code: string) {
   const model = genAI.getGenerativeModel({model: "gemini-1.5-pro-latest"});
