@@ -36,8 +36,8 @@ export default function AppHeader({ isDarkMode, toggleTheme }: AppHeaderProps) {
                     </button>
                     {/* Logo Text */}
                     <h1 className={`text-lg sm:text-xl font-semibold ${themeClasses.text} group-hover:opacity-80 transition-opacity`}>
-                        <span className="hidden sm:inline">Code Review Assistant</span>
-                        <span className="sm:hidden">AI Review</span>
+                        <span className="hidden sm:inline">RevuAI</span>
+                        <span className="sm:hidden">RevuAI</span>
                     </h1>
                 </Link>
                 <div className="flex flex-1 justify-center mx-4">
