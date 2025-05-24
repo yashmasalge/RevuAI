@@ -2,3 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Hide all scrollbars for all scrollable containers */
+[class*='overflow-auto']::-webkit-scrollbar,
+[class*='overflow-y-auto']::-webkit-scrollbar,
+.custom-scrollbar::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    background: transparent !important;
+}
+
+[class*='overflow-auto'],
+[class*='overflow-y-auto'],
+.custom-scrollbar {
+    scrollbar-width: none !important;
+    /* Firefox */
+    -ms-overflow-style: none !important;
+    /* IE/Edge */
+}

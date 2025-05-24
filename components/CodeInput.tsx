@@ -128,6 +128,7 @@ export default function CodeInput({ onSubmit, isLoading, isDarkMode, themeClasse
                             <button
                                 onClick={() => setShowOptions(!showOptions)}
                                 className={`${themeClasses.inputBg} hover:bg-opacity-80 rounded-xl p-2.5 sm:p-3.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 hover:scale-105 active:scale-95 h-[42px] sm:h-[46px] ${showOptions ? 'rotate-45' : ''}`}
+                                aria-label="Add options"
                             >
                                 <svg className={`w-4 h-4 sm:w-5 sm:h-5 ${themeClasses.text}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -138,11 +139,11 @@ export default function CodeInput({ onSubmit, isLoading, isDarkMode, themeClasse
                             {showOptions && (
                                 <div
                                     ref={optionsRef}
-                                    className="absolute bottom-full mb-2 left-0 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 py-2 transform origin-bottom-left transition-all duration-200 animate-fade-in-up z-10"
+                                    className={`absolute bottom-full mb-2 left-0 w-48 ${themeClasses.cardBg} ${themeClasses.border} rounded-xl shadow-lg border py-2 transform origin-bottom-left transition-all duration-200 animate-fade-in-up z-10`}
                                 >
                                     <button
                                         onClick={handleAddCode}
-                                        className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2 ${!isGitHub ? 'text-blue-500' : themeClasses.text}`}
+                                        className={`w-full px-4 py-2 text-left text-sm ${themeClasses.text} hover:${isDarkMode ? 'bg-gray-700' : 'bg-gray-100'} flex items-center space-x-2 ${!isGitHub ? 'text-blue-500' : ''}`}
                                     >
                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
@@ -151,10 +152,11 @@ export default function CodeInput({ onSubmit, isLoading, isDarkMode, themeClasse
                                     </button>
                                     <button
                                         onClick={handleAddGitHubLink}
-                                        className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2 ${isGitHub ? 'text-blue-500' : themeClasses.text}`}
+                                        className={`w-full px-4 py-2 text-left text-sm ${themeClasses.text} hover:${isDarkMode ? 'bg-gray-700' : 'bg-gray-100'} flex items-center space-x-2 ${isGitHub ? 'text-blue-500' : ''}`}
                                     >
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                        {/* GitHub Icon */}
+                                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2C6.477 2 2 6.484 2 12.021c0 4.428 2.865 8.184 6.839 9.504.5.092.682-.217.682-.483 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.342-3.369-1.342-.454-1.157-1.11-1.465-1.11-1.465-.908-.62.069-.608.069-.608 1.004.07 1.532 1.032 1.532 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.339-2.221-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.295 2.748-1.025 2.748-1.025.546 1.378.202 2.397.1 2.65.64.7 1.028 1.595 1.028 2.688 0 3.847-2.337 4.695-4.566 4.944.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.749 0 .268.18.579.688.481C19.138 20.2 22 16.448 22 12.021 22 6.484 17.523 2 12 2z" />
                                         </svg>
                                         <span>Add GitHub Link</span>
                                     </button>
@@ -237,26 +239,7 @@ export default function CodeInput({ onSubmit, isLoading, isDarkMode, themeClasse
 
                 .shake-animation {
                     animation: shake 0.3s ease-in-out;
-                }
-
-                :global(.custom-scrollbar::-webkit-scrollbar) {
-                    width: 6px;
-                    height: 6px;
-                }
-                
-                :global(.custom-scrollbar::-webkit-scrollbar-track) {
-                    background: transparent;
-                }
-                
-                :global(.custom-scrollbar::-webkit-scrollbar-thumb) {
-                    background: rgba(156, 163, 175, 0.5);
-                    border-radius: 3px;
-                }
-                
-                :global(.custom-scrollbar::-webkit-scrollbar-thumb:hover) {
-                    background: rgba(156, 163, 175, 0.7);
-                }
-            `}</style>
+                }            `}</style>
         </div>
     );
 }

@@ -4,6 +4,7 @@ import CodeInput from "../components/CodeInput";
 import FeedbackCard from "../components/FeedbackCard";
 import GitHubInput from "../components/GitHubInput";
 import AppHeader from "../components/AppHeader";
+import { useTheme } from "../components/ThemeProvider";
 
 interface Message {
   id: string;
@@ -20,12 +21,18 @@ interface Feedback {
 }
 
 export default function HomePage() {
+  const { isDarkMode, toggleTheme } = useTheme();
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const [history, setHistory] = useState<Feedback[]>([]);
   const [historyLoading, setHistoryLoading] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [atTop, setAtTop] = useState(true);
+  const [atBottom, setAtBottom] = useState(true);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const sliderRef = useRef<HTMLDivElement>(null);
+  const [sliderCanScrollLeft, setSliderCanScrollLeft] = useState(false);
+  const [sliderCanScrollRight, setSliderCanScrollRight] = useState(false);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -36,12 +43,6 @@ export default function HomePage() {
   }, [messages]);
 
   useEffect(() => {
-    // Check for saved theme preference or default to light mode
-    // Note: localStorage is not available in Claude artifacts, so we'll use a default
-    setIsDarkMode(false);
-  }, []);
-
-  useEffect(() => {
     fetch("/api/history")
       .then((res) => res.json())
       .then((data) => {
@@ -49,10 +50,6 @@ export default function HomePage() {
         setHistoryLoading(false);
       });
   }, []);
-
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-  };
 
   const handleCodeSubmit = async (code: string) => {
     if (!code.trim() || isLoading) return;
@@ -110,12 +107,72 @@ export default function HomePage() {
     hoverBg: isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50',
   };
 
+  // Track scroll position
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+    const handleScroll = () => {
+      setAtTop(container.scrollTop === 0);
+      setAtBottom(container.scrollHeight - container.scrollTop === container.clientHeight);
+    };
+    container.addEventListener('scroll', handleScroll);
+    // Initial state
+    handleScroll();
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, [messages]);
+
+  // Check if slider is scrollable
+  useEffect(() => {
+    const checkSliderScroll = () => {
+      const slider = sliderRef.current;
+      if (!slider) return;
+      setSliderCanScrollLeft(slider.scrollLeft > 0);
+      setSliderCanScrollRight(slider.scrollWidth > slider.clientWidth + slider.scrollLeft + 1);
+    };
+    checkSliderScroll();
+    window.addEventListener('resize', checkSliderScroll);
+    if (sliderRef.current) {
+      sliderRef.current.addEventListener('scroll', checkSliderScroll);
+    }
+    return () => {
+      window.removeEventListener('resize', checkSliderScroll);
+      if (sliderRef.current) {
+        sliderRef.current.removeEventListener('scroll', checkSliderScroll);
+      }
+    };
+  }, [history, messages]);
+
+  const scrollToTop = () => {
+    scrollContainerRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Helper to check if current messages are a single review from history
+  const isSingleReview = messages.length === 2 && history.some(h =>
+    messages[0].content === h.code && messages[1].content === h.response
+  );
+
   return (
-    <div className={`flex flex-col h-screen ${themeClasses.background} transition-colors duration-300 custom-scrollbar`}>
+    <div className={`flex flex-col h-screen ${themeClasses.background} transition-colors duration-300`}>
       <AppHeader isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
 
+      {/* Floating Back Button below header for single review chat */}
+      {isSingleReview && (
+        <div className="max-w-4xl mx-auto px-3 sm:px-4 mt-4">
+          <button
+            onClick={() => setMessages([])}
+            className={`flex items-center gap-2 text-sm px-4 py-2 rounded-full font-medium shadow border transition focus:outline-none focus:ring-2 focus:ring-blue-500
+              ${isDarkMode ? 'bg-gray-800 text-gray-100 hover:bg-gray-700 border-gray-700' : 'bg-white text-gray-800 hover:bg-gray-100 border-gray-200'}`}
+            aria-label="Back to all reviews"
+            style={{ minWidth: 0 }}
+          >
+            <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
+            <span className="hidden sm:inline">Back</span>
+          </button>
+        </div>
+      )}
+
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto custom-scrollbar">
+      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto custom-scrollbar relative">
         <div className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
 
           {messages.length === 0 ? (
@@ -167,20 +224,86 @@ export default function HomePage() {
             </div>
           )}
 
-          {/* Recent Reviews Section */}
+          {/* Recent Reviews Section as a slider */}
           {messages.length === 0 && !historyLoading && history.length > 0 && (
             <div className="mt-8">
               <h2 className={`text-lg font-semibold mb-3 ${themeClasses.text}`}>Recent Reviews</h2>
-              <div className="space-y-3">
-                {history.slice(0, 3).map((item) => (
-                  <div key={item._id} className={`${themeClasses.cardBg} border ${themeClasses.border} rounded-lg p-3 text-xs`}>
-                    <div className="mb-1 text-gray-400">{new Date(item.createdAt).toLocaleString()}</div>
-                    <div className="mb-1 font-mono whitespace-pre-wrap break-all max-h-24 overflow-auto">{item.code.slice(0, 300)}{item.code.length > 300 ? '...' : ''}</div>
-                    <div className="prose prose-xs max-w-none text-gray-600 dark:text-gray-300 mt-1">{item.response.slice(0, 200)}{item.response.length > 200 ? '...' : ''}</div>
-                  </div>
-                ))}
+              <div className="relative">
+                {sliderCanScrollLeft && (
+                  <button
+                    type="button"
+                    className="hidden sm:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-blue-500 hover:bg-blue-600 text-white rounded-full p-2 shadow transition disabled:opacity-40"
+                    style={{ left: '-18px' }}
+                    onClick={() => {
+                      const slider = sliderRef.current;
+                      if (slider) slider.scrollBy({ left: -320, behavior: 'smooth' });
+                    }}
+                    aria-label="Scroll left"
+                  >
+                    <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
+                  </button>
+                )}
+                <div
+                  id="recent-reviews-slider"
+                  ref={sliderRef}
+                  className="flex overflow-x-auto gap-4 pb-2 custom-scrollbar snap-x snap-mandatory hide-scrollbar overflow-visible"
+                  style={{ scrollSnapType: 'x mandatory' }}
+                >
+                  {history.slice(0, 8).map((item) => {
+                    const summary = (item.code.split('\n').find(line => line.trim()) || item.code).slice(0, 80) + (item.code.length > 80 ? '...' : '');
+                    return (
+                      <button
+                        key={item._id}
+                        className={`group min-w-[260px] max-w-xs w-full text-left ${themeClasses.cardBg} border ${themeClasses.border} rounded-xl p-4 shadow-sm transition-colors duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 flex flex-col gap-2 cursor-pointer snap-center relative`}
+                        style={{ zIndex: 1 }}
+                        onMouseEnter={e => e.currentTarget.style.zIndex = '10'}
+                        onMouseLeave={e => e.currentTarget.style.zIndex = '1'}
+                        onClick={() => {
+                          setMessages([
+                            {
+                              id: item._id + '-user',
+                              type: 'user',
+                              content: item.code,
+                              timestamp: new Date(item.createdAt)
+                            },
+                            {
+                              id: item._id + '-ai',
+                              type: 'ai',
+                              content: item.response,
+                              timestamp: new Date(item.createdAt)
+                            }
+                          ]);
+                        }}
+                        title="View this review"
+                        tabIndex={0}
+                      >
+                        <div className={`flex items-center gap-2 mb-1`}>
+                          <span className="inline-block w-2 h-2 rounded-full bg-blue-400 group-hover:bg-blue-500 transition" />
+                          <span className={`text-xs ${themeClasses.textMuted}`}>{new Date(item.createdAt).toLocaleString()}</span>
+                        </div>
+                        <div className={`font-semibold text-sm truncate ${themeClasses.text}`}>{summary}</div>
+                        <div className={`text-xs mt-1 line-clamp-3 ${themeClasses.textSecondary}`}>{item.response.slice(0, 120)}{item.response.length > 120 ? '...' : ''}</div>
+                        <span className="mt-2 text-xs text-blue-500 group-hover:underline self-end">Open chat →</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                {sliderCanScrollRight && (
+                  <button
+                    type="button"
+                    className="hidden sm:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-blue-500 hover:bg-blue-600 text-white rounded-full p-2 shadow transition disabled:opacity-40"
+                    style={{ right: '-18px' }}
+                    onClick={() => {
+                      const slider = sliderRef.current;
+                      if (slider) slider.scrollBy({ left: 320, behavior: 'smooth' });
+                    }}
+                    aria-label="Scroll right"
+                  >
+                    <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
+                  </button>
+                )}
               </div>
-              <div className="mt-2 text-right">
+              <div className="mt-4 text-right">
                 <a href="/history" className="text-blue-500 hover:underline text-xs">View all history →</a>
               </div>
             </div>
@@ -227,73 +350,21 @@ export default function HomePage() {
       </footer>
 
       <style jsx>{`
-        /* Custom Scrollbar Styles */
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 8px;
-          height: 8px;
-        }
-        
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: ${isDarkMode ? '#374151' : '#f3f4f6'};
-          border-radius: 10px;
-        }
-        
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: ${isDarkMode
-          ? 'linear-gradient(135deg, #6366f1, #8b5cf6)'
-          : 'linear-gradient(135deg, #3b82f6, #6366f1)'
-        };
-          border-radius: 10px;
-          border: 2px solid ${isDarkMode ? '#374151' : '#f3f4f6'};
-        }
-        
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: ${isDarkMode
-          ? 'linear-gradient(135deg, #4f46e5, #7c3aed)'
-          : 'linear-gradient(135deg, #2563eb, #4f46e5)'
-        };
-        }
-        
-        .custom-scrollbar::-webkit-scrollbar-corner {
-          background: ${isDarkMode ? '#374151' : '#f3f4f6'};
-        }
-        
-        /* Firefox Scrollbar */
-        .custom-scrollbar {
-          scrollbar-width: thin;
-          scrollbar-color: ${isDarkMode ? '#6366f1 #374151' : '#3b82f6 #f3f4f6'};
-        }
-        
         /* Mobile Safari bounce prevention */
         body {
           overscroll-behavior: none;
         }
-        
+        .hide-scrollbar::-webkit-scrollbar { display: none !important; }
+        .hide-scrollbar { scrollbar-width: none !important; -ms-overflow-style: none !important; }
         @keyframes fade-in {
           from { opacity: 0; transform: translateY(20px); }
           to { opacity: 1; transform: translateY(0); }
         }
-        
         @keyframes slide-up {
           from { opacity: 0; transform: translateY(10px); }
           to { opacity: 1; transform: translateY(0); }
         }
-        
-        .animate-fade-in {
-          animation: fade-in 0.6s ease-out;
-        }
-        
-        .animate-slide-up {
-          animation: slide-up 0.3s ease-out;
-        }
-        
-        /* Mobile optimizations */
-        @media (max-width: 640px) {
-          .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-          }
-        }
+        /* Remove translateY hover for review card, use only shading */
       `}</style>
     </div>
   );

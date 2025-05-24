@@ -14,25 +14,58 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 
     // Only run once when component mounts
     useEffect(() => {
-        const savedTheme = localStorage.getItem('theme');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches; const shouldBeDark = savedTheme ? savedTheme === 'dark' : prefersDark;
-        setIsDarkMode(shouldBeDark);
+        // Set theme on mount
+        const applyTheme = (theme: 'dark' | 'light') => {
+            setIsDarkMode(theme === 'dark');
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            }
+        };
 
-        if (shouldBeDark) {
-            document.documentElement.classList.add('dark');
-            localStorage.setItem('theme', 'dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-            localStorage.setItem('theme', 'light');
-        }
+        // Check saved theme or system preference
+        const savedTheme = localStorage.getItem('theme') as 'dark' | 'light' | null;
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const initialTheme = savedTheme ? savedTheme : (prefersDark ? 'dark' : 'light');
+        applyTheme(initialTheme);
+
+        // Listen for system theme changes
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        const handleSystemThemeChange = (e: MediaQueryListEvent) => {
+            if (!localStorage.getItem('theme')) {
+                applyTheme(e.matches ? 'dark' : 'light');
+            }
+        };
+        mediaQuery.addEventListener('change', handleSystemThemeChange);
+
+        // Listen for theme changes in other tabs
+        const handleStorage = (e: StorageEvent) => {
+            if (e.key === 'theme') {
+                applyTheme((e.newValue as 'dark' | 'light') || (prefersDark ? 'dark' : 'light'));
+            }
+        };
+        window.addEventListener('storage', handleStorage);
+
         setMounted(true);
+        return () => {
+            mediaQuery.removeEventListener('change', handleSystemThemeChange);
+            window.removeEventListener('storage', handleStorage);
+        };
     }, []);
 
     const toggleTheme = () => {
         setIsDarkMode((prev) => {
             const next = !prev;
-            document.documentElement.classList.toggle('dark');
-            localStorage.setItem('theme', next ? 'dark' : 'light');
+            const theme = next ? 'dark' : 'light';
+            localStorage.setItem('theme', theme);
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
             return next;
         });
     };

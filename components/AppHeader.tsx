@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import AppLogoIcon from './AppLogoIcon';
 
 interface AppHeaderProps {
     isDarkMode: boolean;
@@ -20,15 +21,26 @@ export default function AppHeader({ isDarkMode, toggleTheme }: AppHeaderProps) {
 
     return (
         <header className={`${themeClasses.cardBg} border-b ${themeClasses.border} px-3 sm:px-4 py-3 shadow-sm transition-colors duration-300`}>
-            <div className="hidden:max-w-4xl mx-auto flex items-center justify-evenly sm:justify-between">                <Link href="/" className="flex items-center space-x-2 sm:space-x-3 group">
-                <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center transition-transform group-hover:scale-105">
-                    <span className="text-white text-xs sm:text-sm font-bold">AI</span>
-                </div>
-                <h1 className={`text-lg sm:text-xl font-semibold ${themeClasses.text} group-hover:opacity-80 transition-opacity`}>
-                    <span className="hidden sm:inline">Code Review Assistant</span>
-                    <span className="sm:hidden">AI Review</span>
-                </h1>
-            </Link>                <div className="flex flex-1 justify-center mx-4">
+            <div className="hidden:max-w-4xl mx-auto flex items-center justify-evenly sm:justify-between">
+                <Link href="/" className="flex items-center space-x-2 sm:space-x-3 group">
+                    {/* Logo Icon Button */}
+                    <button
+                        type="button"
+                        tabIndex={-1}
+                        aria-label="Home"
+                        className="rounded-full p-1.5 bg-gradient-to-r from-blue-500 to-purple-600 shadow-md hover:shadow-lg transition focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        style={{ minWidth: 0 }}
+                        disabled
+                    >
+                        <AppLogoIcon className="w-7 h-7 sm:w-8 sm:h-8" />
+                    </button>
+                    {/* Logo Text */}
+                    <h1 className={`text-lg sm:text-xl font-semibold ${themeClasses.text} group-hover:opacity-80 transition-opacity`}>
+                        <span className="hidden sm:inline">Code Review Assistant</span>
+                        <span className="sm:hidden">AI Review</span>
+                    </h1>
+                </Link>
+                <div className="flex flex-1 justify-center mx-4">
 
                 </div>
 
