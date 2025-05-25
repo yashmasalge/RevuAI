@@ -1,9 +1,6 @@
-<!-- filepath: e:\ai-peer-review\README.md -->
 
 <p align="center">
-  <img src="public/next.svg" alt="Next.js Logo" width="120" />
-  <img src="public/vercel.svg" alt="Vercel Logo" width="100" />
-  <img src="public/globe.svg" alt="Project Logo" width="100" />
+  <img src="public/AppLogoIcon.svg" alt="RevuAI Logo" width="64" />
 </p>
 
 <h1 align="center">RevuAI</h1>
@@ -16,18 +13,18 @@
 
 ## 🚀 Overview
 
-AI Peer Review is a web application designed to streamline and automate the code review process using advanced AI models. It allows developers to submit code, receive instant feedback, and track review history, all within a beautiful and intuitive interface.
+RevuAI is a web application designed to streamline and automate the code review process using advanced AI models. It allows developers to submit code, receive instant feedback, and track review history, all within a beautiful and intuitive interface.
 
 ---
 
 ## 🛠️ Technology Stack
 
-- <img src="public/next.svg" alt="Next.js" width="24" /> <b>Next.js 14</b> — React framework for production
-- <img src="public/vercel.svg" alt="Vercel" width="24" /> <b>Vercel</b> — Deployment & serverless functions
-- <img src="public/globe.svg" alt="Tailwind CSS" width="24" /> <b>Tailwind CSS</b> — Utility-first CSS framework
-- <img src="public/file.svg" alt="TypeScript" width="24" /> <b>TypeScript</b> — Type-safe JavaScript
-- <img src="public/window.svg" alt="AI" width="24" /> <b>AI/LLM Integration</b> — Automated code analysis
-- <img src="public/file.svg" alt="MongoDB" width="24" /> <b>MongoDB</b> — Database for storing feedback and history
+- <img src="public/next.svg" alt="Next.js" width="20" style="vertical-align:middle;" /> <b>Next.js 14</b> — React framework for production
+- <img src="public/vercel.svg" alt="Vercel" width="20" style="vertical-align:middle;" /> <b>Vercel</b> — Deployment & serverless functions
+- <img src="public/globe.svg" alt="Tailwind CSS" width="20" style="vertical-align:middle;" /> <b>Tailwind CSS</b> — Utility-first CSS framework
+- <img src="public/file.svg" alt="TypeScript" width="20" style="vertical-align:middle;" /> <b>TypeScript</b> — Type-safe JavaScript
+- <img src="public/window.svg" alt="AI" width="20" style="vertical-align:middle;" /> <b>AI/LLM Integration</b> — Automated code analysis
+- <img src="public/file.svg" alt="MongoDB" width="20" style="vertical-align:middle;" /> <b>MongoDB</b> — Database for storing feedback and history
 
 ---
 
@@ -46,8 +43,8 @@ AI Peer Review is a web application designed to streamline and automate the code
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/ai-peer-review.git
-cd ai-peer-review
+git clone https://github.com/your-username/revuai.git
+cd revuai
 ```
 
 ### 2. Install Dependencies
@@ -98,9 +95,9 @@ Open [http://localhost:3000](http://localhost:3000) in your browser to see the a
 
 ---
 
-## 🌐 Live Demo & Deployment
+## 🌐 Live Demo
 
-Deploy your own instance instantly with <a href="https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme" target="_blank"><img src="public/vercel.svg" alt="Deploy on Vercel" width="100" /></a>
+The project is already deployed! Experience RevuAI live at: [https://revu-ai-nine.vercel.app/](https://revu-ai-nine.vercel.app/)
 
 ---
 
@@ -115,14 +112,14 @@ Deploy your own instance instantly with <a href="https://vercel.com/new?utm_medi
 
 ## 🤝 Contributing
 
-Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/your-username/ai-peer-review/issues) or submit a pull request.
+Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/your-username/revuai/issues) or submit a pull request.
 
 ---
 
 <p align="center">
-  <img src="public/AppLogoIcon.svg" alt="AI Peer Review Logo" width="80" />
+  <img src="public/AppLogoIcon.svg" alt="RevuAI Logo" width="48" />
 </p>
 
 <p align="center">
-  <b>Made with ❤️ by the AI Peer Review Team</b>
+  <b>Made with ❤️ by the RevuAI Team</b>
 </p>
