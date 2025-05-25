@@ -40,13 +40,18 @@ export default function AppHeader({ isDarkMode, toggleTheme }: AppHeaderProps) {
                         <span className="sm:hidden">RevuAI</span>
                     </h1>
                 </Link>
-                <div className="flex flex-1 justify-center mx-4">
 
-                </div>
+                <div className="flex flex-1 justify-center mx-4"></div>
 
                 <div className="flex items-center space-x-2 sm:space-x-4">
-                    <Link href="/history" className={`text-xs px-3 py-1 rounded ${isDarkMode ? 'bg-gray-700 text-gray-200 hover:bg-gray-600' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'} transition`}>
-                        History
+                    <Link href="/history"
+                        className={`flex items-center justify-center h-8 w-8 rounded-full ${isDarkMode ? 'bg-gray-700 text-gray-200 hover:bg-gray-600' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                            } transition-all duration-200 hover:scale-105 hover:shadow-md`}
+                        title="View History"
+                    >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
                     </Link>
 
                     <div className={`hidden sm:flex items-center space-x-2 text-sm ${themeClasses.textMuted}`}>

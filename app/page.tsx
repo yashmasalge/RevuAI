@@ -4,6 +4,7 @@ import CodeInput from "../components/CodeInput";
 import FeedbackCard from "../components/FeedbackCard";
 import GitHubInput from "../components/GitHubInput";
 import AppHeader from "../components/AppHeader";
+import AppFooter from "../components/AppFooter";
 import { useTheme } from "../components/ThemeProvider";
 import Shimmer from "../components/Shimmer";
 
@@ -54,6 +55,13 @@ export default function HomePage() {
 
   const handleCodeSubmit = async (code: string) => {
     setIsLoading(true);
+    // Immediately show the user's code
+    const userMessageId = Date.now().toString();
+    setMessages((prev) => [
+      ...prev,
+      { id: userMessageId, type: "user", content: code, timestamp: new Date() },
+    ]);
+
     try {
       const response = await fetch("/api/analyze", {
         method: "POST",
@@ -64,8 +72,7 @@ export default function HomePage() {
 
       setMessages((prev) => [
         ...prev,
-        { id: Date.now().toString(), type: "user", content: code, timestamp: new Date() },
-        { id: (Date.now() + 1).toString(), type: "ai", content: data.response, timestamp: new Date() },
+        { id: Date.now().toString(), type: "ai", content: data.response, timestamp: new Date() },
       ]);
     } catch (error) {
       console.error("Error analyzing code:", error);
@@ -153,13 +160,12 @@ export default function HomePage() {
       {/* Messages Area */}
       <div ref={scrollContainerRef} className="flex-1 overflow-y-auto custom-scrollbar relative">
         <div className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
-
           {messages.length === 0 ? (
             <div className="text-center py-8 sm:py-12 animate-fade-in">
               <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 hover:scale-105 transition-transform duration-200">
                 <span className="text-white text-xl sm:text-2xl">🤖</span>
               </div>
-              <h2 className={`text-xl sm:text-2xl font-bold ${themeClasses.text} mb-2`}>Welcome to AI Code Review</h2>
+              <h2 className={`text-xl sm:text-2xl font-bold ${themeClasses.text} mb-2`}>Welcome to RevuAI</h2>
               <p className={`${themeClasses.textSecondary} mb-6 sm:mb-8 max-w-md mx-auto px-4`}>
                 Paste your code below and I'll provide detailed analysis, suggestions, and best practices.
               </p>
@@ -191,16 +197,28 @@ export default function HomePage() {
               </div>
             </div>
           ) : (
-            <div className="space-y-4 sm:space-y-6">
-              {messages.map((message) => (
-                <FeedbackCard
-                  key={message.id}
-                  message={message}
-                  isDarkMode={isDarkMode}
-                  themeClasses={themeClasses}
-                />
-              ))}
-            </div>
+            <>
+              <button
+                onClick={() => setMessages([])}
+                className={`flex items-center gap-2 text-sm px-4 py-2 rounded-full font-medium shadow border transition focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4
+                  ${isDarkMode ? 'bg-gray-800 text-gray-100 hover:bg-gray-700 border-gray-700' : 'bg-white text-gray-800 hover:bg-gray-100 border-gray-200'}`}
+                aria-label="Back to start"
+                style={{ minWidth: 0 }}
+              >
+                <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
+                <span className="hidden sm:inline">Back</span>
+              </button>
+              <div className="space-y-4 sm:space-y-6">
+                {messages.map((message) => (
+                  <FeedbackCard
+                    key={message.id}
+                    message={message}
+                    isDarkMode={isDarkMode}
+                    themeClasses={themeClasses}
+                  />
+                ))}
+              </div>
+            </>
           )}
 
           {/* Recent Reviews Section as a slider */}
@@ -313,6 +331,34 @@ export default function HomePage() {
         </div>
       </div>
 
+      {/* Scroll button */}
+      <div className="relative max-w-4xl w-full mx-auto">
+        <div className="absolute right-4 -top-12">
+          {atTop && !atBottom && (
+            <button
+              onClick={scrollToBottom}
+              className="bg-gray-800 text-white dark:bg-gray-200 dark:text-gray-900 rounded-full shadow-lg p-2 transition-all duration-300 ease-in-out transform animate-float"
+              aria-label="Scroll to bottom"
+            >
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+          )}
+          {!atTop && (
+            <button
+              onClick={scrollToTop}
+              className="bg-gray-800 text-white dark:bg-gray-200 dark:text-gray-900 rounded-full shadow-lg p-2 transition-all duration-300 ease-in-out transform animate-float"
+              aria-label="Scroll to top"
+            >
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="18 15 12 9 6 15" />
+              </svg>
+            </button>
+          )}
+        </div>
+      </div>
+
       {/* Input Area */}
       <CodeInput
         onSubmit={handleCodeSubmit}
@@ -321,12 +367,8 @@ export default function HomePage() {
         themeClasses={themeClasses}
       />
 
-      {/* Footer - Hidden on mobile to save space */}
-      <footer className={`hidden sm:block ${themeClasses.cardBg} border-t ${themeClasses.border} px-4 py-3 transition-colors duration-300`}>
-        <div className={`max-w-4xl mx-auto flex items-center justify-center text-xs ${themeClasses.textMuted}`}>
-          <span>Built with AI • Always review suggestions before implementing</span>
-        </div>
-      </footer>
+      {/* Footer */}
+      <AppFooter isDarkMode={isDarkMode} />
 
       <style jsx>{`
         /* Mobile Safari bounce prevention */
@@ -335,6 +377,13 @@ export default function HomePage() {
         }
         .hide-scrollbar::-webkit-scrollbar { display: none !important; }
         .hide-scrollbar { scrollbar-width: none !important; -ms-overflow-style: none !important; }
+        @keyframes float {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-4px); }
+        }
+        .animate-float {
+          animation: float 2s ease-in-out infinite;
+        }
         @keyframes fade-in {
           from { opacity: 0; transform: translateY(20px); }
           to { opacity: 1; transform: translateY(0); }

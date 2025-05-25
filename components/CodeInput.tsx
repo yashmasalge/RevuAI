@@ -163,11 +163,9 @@ export default function CodeInput({ onSubmit, isLoading, isDarkMode, themeClasse
                                 </div>
                             )}
                         </div>
-                    </div>
-
-                    <div className="flex-1 min-h-0">
-                        <div className={`relative bg-transparent rounded-2xl transition-all duration-200 group`}>
-                            <div className={`absolute inset-0 ${themeClasses.inputBg} rounded-2xl transition-all duration-200`} />
+                    </div>                    <div className="flex-1 min-h-0">
+                        <div className="relative bg-transparent rounded-2xl group">
+                            <div className={`absolute inset-0 ${themeClasses.inputBg} rounded-2xl transition-all duration-200 group-focus-within:ring-1 group-focus-within:ring-blue-500/30 group-focus-within:shadow-md`} />
                             <textarea
                                 ref={textareaRef}
                                 value={code}
@@ -178,7 +176,7 @@ export default function CodeInput({ onSubmit, isLoading, isDarkMode, themeClasse
                                 onKeyDown={handleKeyDown}
                                 placeholder={isGitHub ? "Paste GitHub file or repository URL..." : "Paste your code here... (Press Enter to send, Shift+Enter for new line)"}
                                 disabled={isLoading}
-                                className={`relative w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-transparent border-2 border-transparent rounded-2xl resize-none focus:outline-none focus:border-blue-500 text-xs sm:text-sm font-mono max-h-32 sm:max-h-48 min-h-[42px] sm:min-h-[46px] disabled:opacity-50 ${themeClasses.text} placeholder-gray-400 transition-all duration-200 custom-scrollbar`}
+                                className={`relative w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-transparent outline-0 ring-0 focus:ring-0 focus:outline-0 border-0 rounded-2xl resize-none text-xs sm:text-sm font-mono max-h-32 sm:max-h-48 min-h-[42px] sm:min-h-[46px] disabled:opacity-50 ${themeClasses.text} placeholder-gray-400 transition-all duration-200 custom-scrollbar`}
                                 style={{ height: 'auto' }}
                             />
                             <div className={`absolute bottom-1.5 sm:bottom-2 right-2 text-xs ${themeClasses.textMuted}`}>
