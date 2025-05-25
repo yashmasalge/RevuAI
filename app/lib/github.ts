@@ -18,7 +18,7 @@ export async function fetchGitHubFile(url: string): Promise<string> {
       return await res.text();
     }
     throw new Error('Invalid GitHub URL');
-  } catch (error) {
+  } catch {
     return '';
   }
 }

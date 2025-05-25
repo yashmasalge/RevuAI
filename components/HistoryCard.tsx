@@ -157,7 +157,7 @@ export default function HistoryCard({ feedback, onReReview, onDelete, highlight 
                     >
                         <div className="whitespace-pre-wrap break-words">
                             <ReactMarkdown>
-                                {highlightText(displayedReview, highlight) as any}
+                                {highlightText(displayedReview, highlight) as string}
                             </ReactMarkdown>
                         </div>
                     </div>

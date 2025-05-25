@@ -2,11 +2,9 @@
 import { useState, useRef, useEffect } from "react";
 import CodeInput from "../components/CodeInput";
 import FeedbackCard from "../components/FeedbackCard";
-import GitHubInput from "../components/GitHubInput";
 import AppHeader from "../components/AppHeader";
 import AppFooter from "../components/AppFooter";
 import { useTheme } from "../components/ThemeProvider";
-import Shimmer from "../components/Shimmer";
 
 interface Message {
   id: string;
@@ -120,10 +118,12 @@ export default function HomePage() {
     if (sliderRef.current) {
       sliderRef.current.addEventListener('scroll', checkSliderScroll);
     }
+    // Fix ref usage in effect cleanup by copying sliderRef.current to a variable inside the effect
     return () => {
+      const slider = sliderRef.current;
       window.removeEventListener('resize', checkSliderScroll);
-      if (sliderRef.current) {
-        sliderRef.current.removeEventListener('scroll', checkSliderScroll);
+      if (slider) {
+        slider.removeEventListener('scroll', checkSliderScroll);
       }
     };
   }, [history, messages]);
@@ -167,7 +167,7 @@ export default function HomePage() {
               </div>
               <h2 className={`text-xl sm:text-2xl font-bold ${themeClasses.text} mb-2`}>Welcome to RevuAI</h2>
               <p className={`${themeClasses.textSecondary} mb-6 sm:mb-8 max-w-md mx-auto px-4`}>
-                Paste your code below and I'll provide detailed analysis, suggestions, and best practices.
+                Paste your code below and I&apos;ll provide detailed analysis, suggestions, and best practices.
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 max-w-2xl mx-auto px-4">

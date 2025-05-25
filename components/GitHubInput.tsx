@@ -3,7 +3,6 @@ import { useState, useRef, useEffect } from "react";
 interface GitHubInputProps {
     onSubmit: (code: string) => void;
     isLoading: boolean;
-    isDarkMode: boolean;
     themeClasses: {
         cardBg: string;
         border: string;
@@ -14,7 +13,7 @@ interface GitHubInputProps {
     };
 }
 
-export default function GitHubInput({ onSubmit, isLoading, isDarkMode, themeClasses }: GitHubInputProps) {
+export default function GitHubInput({ onSubmit, isLoading, themeClasses }: GitHubInputProps) {
     const [url, setUrl] = useState("");
     const [error, setError] = useState("");
     const textareaRef = useRef<HTMLTextAreaElement>(null);

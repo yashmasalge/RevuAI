@@ -56,7 +56,7 @@ export default function HistoryPage() {
         try {
             await fetch(`/api/history?id=${id}`, { method: "DELETE" });
             setHistory((prev) => prev.filter((item) => item._id !== id));
-        } catch (error) {
+        } catch {
             alert("Failed to delete review. Please try again.");
         }
     };

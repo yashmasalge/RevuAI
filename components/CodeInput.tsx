@@ -78,7 +78,7 @@ export default function CodeInput({ onSubmit, isLoading, isDarkMode, themeClasse
                     throw new Error('No code received');
                 }
                 onSubmit(data.code);
-            } catch (error) {
+            } catch {
                 // Show error animation
                 if (textareaRef.current) {
                     textareaRef.current.classList.add('shake-animation');
