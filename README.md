@@ -1,6 +1,6 @@
 
 <p align="center">
-  <img src="public/AppLogoIcon.svg" alt="RevuAI Logo" width="64" />
+  <img src="public/favicon.svg" alt="RevuAI Logo" width="64" />
 </p>
 
 <h1 align="center">RevuAI</h1>
@@ -117,7 +117,7 @@ Contributions, issues, and feature requests are welcome! Feel free to check the 
 ---
 
 <p align="center">
-  <img src="public/AppLogoIcon.svg" alt="RevuAI Logo" width="48" />
+  <img src="public/favicon.svg" alt="RevuAI Logo" width="48" />
 </p>
 
 <p align="center">
